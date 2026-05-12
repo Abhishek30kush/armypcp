@@ -27,6 +27,8 @@ export default function ApplicationForm({ userData }) {
   const teachingType = watch("teachingType");
   const hasExperience = watch("hasExperience");
   const armyDependent = watch("armyDependent");
+  const csbStatus = watch("csb");
+  const ctetStatus = watch("ctet");
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -268,11 +270,26 @@ export default function ApplicationForm({ userData }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SelectField label="CSB Status" name="csb" options={['Yes', 'No']} required />
             <SelectField label="CTET Status" name="ctet" options={['Yes', 'No']} required />
-            <InputField label="Percentage in CTET" name="ctetPercent" />
-            <div className="flex flex-col space-y-1">
-              <label className="text-sm font-semibold text-gray-700">Upload CTET Certificate</label>
-              <input type="file" {...register("ctetFile")} className="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm" />
-            </div>
+            
+            {csbStatus === 'Yes' && (
+              <>
+                <InputField label="Percentage in CSB" name="csbPercent" required showAsterisk />
+                <div className="flex flex-col space-y-1">
+                  <label className="text-sm font-semibold text-gray-700">Upload CSB Certificate <span className="text-red-500">*</span></label>
+                  <input type="file" {...register("csbFile", { required: true })} className="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm" />
+                </div>
+              </>
+            )}
+
+            {ctetStatus === 'Yes' && (
+              <>
+                <InputField label="Percentage in CTET" name="ctetPercent" required showAsterisk />
+                <div className="flex flex-col space-y-1">
+                  <label className="text-sm font-semibold text-gray-700">Upload CTET Certificate <span className="text-red-500">*</span></label>
+                  <input type="file" {...register("ctetFile", { required: true })} className="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm" />
+                </div>
+              </>
+            )}
           </div>
         </section>
 
