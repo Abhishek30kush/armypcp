@@ -96,13 +96,13 @@ export default function ApplicationForm({ userData }) {
   );
 
   return (
-    <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl overflow-hidden border border-white/50 my-8 animate-fade-in-up">
-      <div className="bg-gradient-to-r from-green-700 to-emerald-600 py-8 px-10 text-white">
-        <h1 className="text-3xl font-extrabold tracking-tight">Application Form</h1>
-        <p className="text-green-100 font-medium mt-1 text-lg">For the post of PGT/TGT/PRT</p>
+    <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/50 animate-fade-in-up">
+      <div className="bg-gradient-to-r from-green-800 via-green-700 to-emerald-700 py-10 px-12 text-white text-center sm:text-left">
+        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2 uppercase">Application Details</h2>
+        <p className="text-green-100 font-medium text-lg">Position: PGT / TGT / PRT / Balvatika</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="p-10 space-y-12">
+      <form onSubmit={handleSubmit(onSubmit)} className="p-8 md:p-12 space-y-16">
         
         {/* POST APPLIED FOR */}
         <section className="space-y-6">

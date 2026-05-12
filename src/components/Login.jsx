@@ -35,14 +35,12 @@ export default function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh]">
-      <div className="mb-8 text-center animate-fade-in-down">
-        <h1 className="text-4xl font-extrabold text-green-800 drop-shadow-sm mb-2">Army Public School</h1>
-        <p className="text-lg text-green-700 font-medium">Application Form Portal for PGT/TGT/PRT</p>
-      </div>
-
-      <div className="w-full max-w-md bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white p-8 transition-all duration-300 hover:shadow-2xl">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Login to Continue</h2>
+    <div className="flex flex-col items-center justify-center">
+      <div className="w-full max-w-md bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-10 animate-fade-in-up">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900">Welcome</h2>
+          <p className="text-gray-500 mt-1">Please verify your identity to begin</p>
+        </div>
         
         {!otpSent ? (
           <form onSubmit={handleSendOtp} className="space-y-6">
