@@ -25,6 +25,7 @@ export default function ApplicationForm({ userData }) {
   const [submitted, setSubmitted] = useState(false);
 
   const teachingType = watch("teachingType");
+  const hasExperience = watch("hasExperience");
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -166,6 +167,31 @@ export default function ApplicationForm({ userData }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SelectField label="Do you have any experience?" name="hasExperience" options={['Yes', 'No']} required />
           </div>
+
+          {hasExperience === 'Yes' && (
+            <div className="space-y-6 mt-6 p-6 bg-gray-50 rounded-xl border border-gray-200 animate-fade-in">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InputField label="Designation of Post" name="exp_designation" required showAsterisk />
+                <InputField label="Name and Address of Institution/Organization" name="exp_institution" required showAsterisk />
+                
+                <InputField label="Designation of superior In charge" name="exp_superior_designation" required showAsterisk />
+                <InputField label="Contact No of superior" name="exp_superior_contact" required showAsterisk />
+                
+                <InputField label="Period of notice you will have to give, if selected?" name="exp_notice_period" required showAsterisk />
+                <InputField label="What salary are you drawing?" name="exp_salary" required showAsterisk />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-gray-200">
+                <InputField label="Sr. no" name="exp_sr_no" required showAsterisk />
+                <SelectField label="Designation" name="exp_role_type" options={['PGT', 'TGT', 'PRT', 'Balvatika', 'Other']} required showAsterisk />
+                <InputField label="School/College" name="exp_school_college" required showAsterisk />
+                
+                <InputField label="Sub taught" name="exp_sub_taught" required showAsterisk />
+                <InputField label="No of pupils taken" name="exp_pupils_taken" required showAsterisk />
+                <InputField label="Total year in experience" name="exp_total_years" required showAsterisk />
+              </div>
+            </div>
+          )}
         </section>
 
         {/* FAMILY LIFE */}
