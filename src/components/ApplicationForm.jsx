@@ -26,6 +26,7 @@ export default function ApplicationForm({ userData }) {
 
   const teachingType = watch("teachingType");
   const hasExperience = watch("hasExperience");
+  const armyDependent = watch("armyDependent");
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -203,6 +204,19 @@ export default function ApplicationForm({ userData }) {
             <InputField label="Name & occupation of spouse" name="spouseDetails" />
             <InputField label="No of children with age and sex" name="childrenDetails" />
             <SelectField label="If Army Dependent" name="armyDependent" options={['Yes', 'No']} required />
+            
+            {armyDependent === 'Yes' && (
+              <div className="flex flex-col space-y-2 animate-fade-in">
+                <label className="text-sm font-semibold text-gray-700">
+                  Upload Army Dependent Certificate <span className="text-red-500">*</span>
+                </label>
+                <input 
+                  type="file" 
+                  {...register("armyDependentFile", { required: true })} 
+                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg p-1 bg-white shadow-sm transition-all" 
+                />
+              </div>
+            )}
           </div>
         </section>
 
