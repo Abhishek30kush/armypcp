@@ -226,32 +226,40 @@ export default function ApplicationForm({ userData }) {
           <p className="text-sm text-gray-500 italic mb-4">Give details of all exams starting from High School onwards</p>
           
           <div className="space-y-8">
-            {qualifications.map((qual) => (
+            {qualifications.map((qual) => {
+              let isMandatory = false;
+              if (['highSchool', 'intermediate', 'graduation', 'professional'].includes(qual.id)) {
+                isMandatory = true;
+              } else if (qual.id === 'postGraduation') {
+                isMandatory = teachingType === 'TGT' || teachingType === 'PGT';
+              }
+
+              return (
               <div key={qual.id} className="bg-gray-50/50 p-6 rounded-xl border border-gray-200 space-y-6">
                 <h4 className="text-lg font-semibold text-gray-700 border-b border-gray-200 pb-2">{qual.label}</h4>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <InputField label="Name of Board / Institute" name={`edu_${qual.id}_board`} showAsterisk={true} />
-                  <InputField label="Subject" name={`edu_${qual.id}_subject`} showAsterisk={true} />
-                  <InputField label="Year" name={`edu_${qual.id}_year`} showAsterisk={true} />
+                  <InputField label="Name of Board / Institute" name={`edu_${qual.id}_board`} required={isMandatory} showAsterisk={isMandatory} />
+                  <InputField label="Subject" name={`edu_${qual.id}_subject`} required={isMandatory} showAsterisk={isMandatory} />
+                  <InputField label="Year" name={`edu_${qual.id}_year`} required={isMandatory} showAsterisk={isMandatory} />
                   
-                  <InputField label="Marks Obtained" name={`edu_${qual.id}_marks`} showAsterisk={true} />
-                  <InputField label="Total Marks" name={`edu_${qual.id}_totalMarks`} showAsterisk={true} />
-                  <InputField label="Percentage" name={`edu_${qual.id}_percent`} showAsterisk={true} />
+                  <InputField label="Marks Obtained" name={`edu_${qual.id}_marks`} required={isMandatory} showAsterisk={isMandatory} />
+                  <InputField label="Total Marks" name={`edu_${qual.id}_totalMarks`} required={isMandatory} showAsterisk={isMandatory} />
+                  <InputField label="Percentage" name={`edu_${qual.id}_percent`} required={isMandatory} showAsterisk={isMandatory} />
                 </div>
 
                 <div className="flex flex-col space-y-2">
                   <label className="text-sm font-semibold text-gray-700">
-                    Upload scanned marksheet <span className="text-red-500">*</span>
+                    Upload scanned marksheet {isMandatory && <span className="text-red-500">*</span>}
                   </label>
                   <input 
                     type="file" 
-                    {...register(`edu_${qual.id}_file`)} 
+                    {...register(`edu_${qual.id}_file`, { required: isMandatory })} 
                     className="block w-full md:w-1/3 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-white file:text-gray-700 hover:file:bg-gray-100 border border-gray-300 rounded-lg p-1 bg-white shadow-sm transition-all" 
                   />
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </section>
 
