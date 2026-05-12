@@ -111,14 +111,18 @@ export default function ApplicationForm({ userData }) {
             </div>
           </div>
 
-          <div className="md:w-[48%]">
-            <SelectField label="Teaching" name="teachingType" options={['PGT', 'TGT', 'PRT', 'Balvatika']} required />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <SelectField label="PGT" name="pgtSubject" options={['Physics', 'Mathematics', 'Counselor']} showAsterisk={true} />
-            <SelectField label="TGT" name="tgtSubject" options={['Hindi']} showAsterisk={true} />
-            <SelectField label="Balvatika" name="balvatikaRole" options={['Balvatika Coordinator', 'Balvatika Teacher', 'Balvatika Assistant Teacher']} showAsterisk={true} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <SelectField label="Teaching Role" name="teachingType" options={['PGT', 'TGT', 'PRT', 'Balvatika']} required />
+            
+            {teachingType === 'PGT' && (
+              <SelectField label="PGT Subject" name="pgtSubject" options={['Physics', 'Mathematics', 'Counselor']} showAsterisk={true} />
+            )}
+            {teachingType === 'TGT' && (
+              <SelectField label="TGT Subject" name="tgtSubject" options={['Hindi']} showAsterisk={true} />
+            )}
+            {teachingType === 'Balvatika' && (
+              <SelectField label="Balvatika Role" name="balvatikaRole" options={['Balvatika Coordinator', 'Balvatika Teacher', 'Balvatika Assistant Teacher']} showAsterisk={true} />
+            )}
           </div>
         </section>
 
