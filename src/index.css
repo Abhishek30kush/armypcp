@@ -17,6 +17,10 @@
     animation: fadeInUp 0.6s ease-out forwards;
   }
 
+  .animate-success-pop {
+    animation: successPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -31,5 +35,31 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @keyframes successPop {
+    0% {
+      transform: scale(0.5);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background-color: white !important;
+  }
+  .print-only {
+    display: block !important;
   }
 }
