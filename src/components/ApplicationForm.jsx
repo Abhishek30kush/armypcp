@@ -63,7 +63,7 @@ export default function ApplicationForm({ userData }) {
   React.useEffect(() => {
     if (window.Cashfree) {
       const cf = new window.Cashfree({
-        mode: "sandbox", // Use "production" for live
+        mode: import.meta.env.VITE_CASHFREE_MODE || "sandbox",
       });
       setCashfree(cf);
     }
