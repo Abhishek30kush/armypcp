@@ -266,7 +266,7 @@ export default function ApplicationForm({ userData }) {
         <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight">Payment Successful!</h2>
         <div className="space-y-4 max-w-lg">
           <p className="text-gray-600 text-xl font-medium leading-relaxed">
-            Your application for <span className="text-green-700 font-bold">Army Public School, Old Cant</span> has been fully processed and successfully submitted.
+            Your application for <span className="text-green-700 font-bold">Army Public School, Old Cant, Prayagraj</span> has been fully processed and successfully submitted.
           </p>
           <div className="p-4 bg-green-50 rounded-xl border border-green-100 inline-block mb-4">
             <p className="text-green-800 font-bold">Transaction ID: TXN_{(Math.random() * 1000000).toFixed(0)}</p>
@@ -293,7 +293,7 @@ export default function ApplicationForm({ userData }) {
         {/* PRINT ONLY SECTION - Hidden on Screen */}
         <div className="hidden print:block text-left p-8 bg-white w-full max-w-4xl mx-auto border-2 border-gray-100 rounded-xl mt-12">
             <div className="border-b-4 border-green-800 pb-6 mb-8 text-center">
-                <h1 className="text-3xl font-bold text-green-900 uppercase">Army Public School, Old Cant</h1>
+                <h1 className="text-3xl font-bold text-green-900 uppercase">Army Public School, Old Cant, Prayagraj</h1>
                 <p className="text-xl font-semibold">Teacher Recruitment Application ({(new Date().getFullYear())})</p>
             </div>
             
@@ -544,7 +544,7 @@ export default function ApplicationForm({ userData }) {
           
           <div className="text-sm text-gray-700 space-y-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
             <p className="font-semibold">If appointed:-</p>
-            <p>(a) I agree to abide by the AWES Rule and Regulation for Army Public Schools, Old Cant</p>
+            <p>(a) I agree to abide by the AWES Rule and Regulation for Army Public Schools, Old Cant, Prayagraj</p>
             <p>(b) I undertake to serve the school till the end of the final term, ie upto the finalization of the results of the class taught or a period specified/ fixed by the management.</p>
             <p>(c) I solemnly state the all the above particulars/statements are true to the best of my knowledge and belief.</p>
           </div>
