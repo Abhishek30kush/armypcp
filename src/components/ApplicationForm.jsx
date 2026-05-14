@@ -207,8 +207,20 @@ export default function ApplicationForm({ userData }) {
       // Move to payment step
       setFormStep(1);
     } catch (e) {
-      console.error("=== SUBMIT ERROR ===", e);
-      alert("Submission Failed: " + (e.message || "Unknown error. Check internet connection."));
+      console.error("=== SUBMIT ERROR DETAILS ===");
+      console.error("Error Code:", e.code);
+      console.error("Error Message:", e.message);
+      console.error("Full Error:", e);
+      
+      let userMessage = "Submission Failed: " + (e.message || "Unknown error");
+      
+      if (e.code === 'permission-denied') {
+        userMessage = "Access Denied: Please ensure the database rules are deployed and your connection is not being blocked by an adblocker.";
+      } else if (e.message?.includes("timeout") || e.code === 'unavailable') {
+        userMessage = "Network Error: Please check your internet connection and disable any adblockers (like uBlock Origin) that might be blocking Firebase.";
+      }
+      
+      alert(userMessage);
     } finally {
       setIsSubmitting(false);
       console.log("=== SUBMIT END ===");
