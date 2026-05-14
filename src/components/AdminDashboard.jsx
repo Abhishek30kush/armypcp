@@ -114,7 +114,7 @@ export default function AdminDashboard() {
                 <Shield size={40} />
               </div>
               <h2 className="text-2xl font-black tracking-tight">Admin Panel</h2>
-              <p className="text-green-100 text-sm mt-1">Army Public School, Old Cant, Prayagraj</p>
+              <p className="text-green-100 text-sm mt-1">Army Public School, Old Cantt, Prayagraj</p>
             </div>
 
             <form onSubmit={handleAdminLogin} className="p-8 space-y-6">

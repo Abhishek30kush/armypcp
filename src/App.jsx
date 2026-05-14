@@ -36,7 +36,7 @@ function App() {
             <header className="mb-12 text-center">
               <h1 className="text-4xl md:text-5xl font-extrabold text-green-900 tracking-tight mb-2 drop-shadow-sm">
                 Army Public School
-                <span className="block text-2xl md:text-3xl mt-1 opacity-90">Old Cant, Prayagraj</span>
+                <span className="block text-2xl md:text-3xl mt-1 opacity-90">Old Cantt, Prayagraj</span>
               </h1>
               <p className="text-lg md:text-xl text-green-700 font-semibold uppercase tracking-widest">Application Portal</p>
             </header>
@@ -50,7 +50,7 @@ function App() {
             </main>
             
             <footer className="mt-12 text-center text-gray-500 text-sm space-y-2">
-              <p>&copy; {new Date().getFullYear()} Army Public School, Old Cant, Prayagraj. All rights reserved.</p>
+              <p>&copy; {new Date().getFullYear()} Army Public School, Old Cantt, Prayagraj. All rights reserved.</p>
             </footer>
           </div>
         } />
