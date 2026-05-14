@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { order_amount, customer_id, customer_phone, customer_name, customer_email } = req.body;
+  const { order_id, order_amount, customer_id, customer_phone, customer_name, customer_email } = req.body;
 
   const appId = process.env.CASHFREE_APP_ID;
   const secretKey = process.env.CASHFREE_SECRET_KEY;
@@ -24,6 +24,7 @@ export default async function handler(req, res) {
         'x-api-version': '2023-08-01',
       },
       body: JSON.stringify({
+        order_id: order_id || `ORD_${Date.now()}`,
         order_amount: order_amount,
         order_currency: 'INR',
         customer_details: {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UploadCloud, CheckCircle, AlertCircle, Save, CreditCard, ArrowRight, Printer, Download } from 'lucide-react';
 import { db, storage } from '../firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const qualifications = [
@@ -83,13 +83,14 @@ export default function ApplicationForm({ userData }) {
 
     setIsSubmitting(true);
     try {
-      console.log("Initiating payment session...");
+      console.log("Initiating payment session for App ID:", generatedAppId);
       
       const response = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           order_amount: 250,
+          order_id: `ORDER_${generatedAppId}_${Date.now().toString().slice(-4)}`,
           customer_id: userData?.uid || `cust_${Date.now()}`,
           customer_phone: watch("mobNo"),
           customer_name: watch("name"),
@@ -107,21 +108,31 @@ export default function ApplicationForm({ userData }) {
 
       const checkoutOptions = {
         paymentSessionId: data.payment_session_id,
-        redirectTarget: "_modal", // Opens checkout in a modal
+        redirectTarget: "_modal", 
       };
 
-      cashfree.checkout(checkoutOptions).then((result) => {
+      cashfree.checkout(checkoutOptions).then(async (result) => {
         if (result.error) {
           console.error("Payment error:", result.error);
           alert(result.error.message);
         }
-        if (result.redirect) {
-          console.log("Payment redirected");
-        }
-        // Verification is usually done via webhook or status API
-        // For simple flow, we can move to success after modal closes
+        
         if (!result.error) {
-          setFormStep(2);
+          console.log("Payment successful or modal closed. Updating Firestore...");
+          try {
+            // Update document status to Paid
+            await updateDoc(doc(db, "applications", generatedAppId), {
+              status: "Paid",
+              paymentId: data.order_id,
+              paidAt: serverTimestamp()
+            });
+            console.log("Firestore updated with Paid status");
+            setFormStep(2);
+          } catch (updateErr) {
+            console.error("Error updating payment status:", updateErr);
+            // Still move to success step but log the error
+            setFormStep(2);
+          }
         }
       });
 
@@ -144,7 +155,8 @@ export default function ApplicationForm({ userData }) {
     console.log("=== SUBMIT START ===");
     setIsSubmitting(true);
     try {
-      const newAppId = `APS-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 100)}`;
+      // Generate a clean Application ID
+      const newAppId = `APS-${Date.now().toString().slice(-6)}${Math.floor(10 + Math.random() * 90)}`;
       setGeneratedAppId(newAppId);
       
       const cleanData = {};
@@ -152,7 +164,7 @@ export default function ApplicationForm({ userData }) {
       // Handle file uploads and clean data
       for (const key of Object.keys(data)) {
         const value = data[key];
-        if (value && (value instanceof FileList || value instanceof File)) {
+        if (value && (value instanceof FileList || (typeof File !== 'undefined' && value instanceof File))) {
           const file = value instanceof FileList ? value[0] : value;
           if (file) {
             console.log(`Uploading ${key}: ${file.name}...`);
@@ -167,30 +179,32 @@ export default function ApplicationForm({ userData }) {
             cleanData[key] = null;
           }
         } else {
-          cleanData[key] = value;
+          // Keep all other data
+          cleanData[key] = value !== undefined ? value : null;
         }
       }
 
-      console.log("Clean data ready, saving to Firestore...");
+      console.log("Clean data ready, saving to Firestore with ID:", newAppId);
 
-      // Firestore save with 15-second timeout
-      const savePromise = addDoc(collection(db, "applications"), {
+      // Firestore save with specific ID (Application No.)
+      const savePromise = setDoc(doc(db, "applications", newAppId), {
         ...cleanData,
-        createdAt: new Date(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
         status: "Submitted",
         userId: userData?.uid || 'anonymous',
         applicationId: newAppId
       });
 
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Connection timeout. Please check your internet and Firestore rules.")), 15000)
+        setTimeout(() => reject(new Error("Firestore connection timeout. Please check your internet connection.")), 20000)
       );
 
-      const docRef = await Promise.race([savePromise, timeoutPromise]);
+      await Promise.race([savePromise, timeoutPromise]);
       
-      console.log("=== SUCCESS === Firestore ID:", docRef.id);
+      console.log("=== SUCCESS === Application Saved with ID:", newAppId);
       
-      // Move to success step
+      // Move to payment step
       setFormStep(1);
     } catch (e) {
       console.error("=== SUBMIT ERROR ===", e);
