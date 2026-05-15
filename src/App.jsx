@@ -12,7 +12,7 @@ function App() {
     setUserData(data);
     setIsAuthenticated(true);
     
-    // Store user info in Firestore
+    // Store user info in Firestore (Optional metadata sync)
     try {
       const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
       const { db } = await import('./firebase');
@@ -23,8 +23,9 @@ function App() {
       }, { merge: true });
       console.log("User data synced to Firestore");
     } catch (err) {
-      console.error("Error syncing user data:", err);
+      console.warn("User data sync failed (this usually doesn't block the app):", err);
     }
+
   };
 
   return (

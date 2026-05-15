@@ -215,12 +215,13 @@ export default function ApplicationForm({ userData }) {
       let userMessage = "Submission Failed: " + (e.message || "Unknown error");
       
       if (e.code === 'permission-denied') {
-        userMessage = "Access Denied: Please ensure the database rules are deployed and your connection is not being blocked by an adblocker.";
+        userMessage = "Access Denied: Please ensure the database rules are deployed and your connection is not being blocked by an adblocker (like uBlock Origin or AdBlock).";
       } else if (e.message?.includes("timeout") || e.code === 'unavailable') {
-        userMessage = "Network Error: Please check your internet connection and disable any adblockers (like uBlock Origin) that might be blocking Firebase.";
+        userMessage = "Network Error: Could not connect to Firebase. This is usually caused by an adblocker blocking 'firestore.googleapis.com'. Please disable your adblocker and try again.";
       }
       
       alert(userMessage);
+
     } finally {
       setIsSubmitting(false);
       console.log("=== SUBMIT END ===");

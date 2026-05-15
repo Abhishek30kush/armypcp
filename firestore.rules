@@ -8,11 +8,13 @@ service cloud.firestore {
       // Allow anyone to submit a new application
       allow create: if true;
       
-      // Allow reading and updating if they know the ID (or we could restrict further)
+      // Allow reading and updating if they know the ID
+      // This is necessary for the current flow where the ID is generated on client
       allow read, update: if true;
     }
     
-    // User profiles: strictly owner-only
+    // User profiles: strictly owner-only for sensitive data
+    // But allow creation/merge on login
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
@@ -23,3 +25,4 @@ service cloud.firestore {
     }
   }
 }
+
