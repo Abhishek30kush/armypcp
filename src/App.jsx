@@ -3,7 +3,7 @@ import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import Login from './components/Login';
 import ApplicationForm from './components/ApplicationForm';
 import AdminDashboard from './components/AdminDashboard';
-
+import { ContactUs, TermsConditions, RefundsCancellations } from './components/PolicyPages';
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -50,14 +50,24 @@ function App() {
               )}
             </main>
             
-            <footer className="mt-12 text-center text-gray-500 text-sm space-y-2">
+            <footer className="mt-12 text-center text-gray-500 text-sm space-y-4">
               <p>&copy; {new Date().getFullYear()} Army Public School, Old Cantt, Prayagraj. All rights reserved.</p>
+              <div className="flex justify-center space-x-6 text-green-700">
+                <Link to="/contact" className="hover:underline">Contact Us</Link>
+                <Link to="/terms" className="hover:underline">Terms & Conditions</Link>
+                <Link to="/refunds" className="hover:underline">Refunds & Cancellations</Link>
+              </div>
             </footer>
           </div>
         } />
 
         {/* Admin Dashboard Route */}
         <Route path="/admin" element={<AdminDashboard />} />
+
+        {/* Policy Pages */}
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/terms" element={<TermsConditions />} />
+        <Route path="/refunds" element={<RefundsCancellations />} />
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />

@@ -245,8 +245,8 @@ export default function ApplicationForm({ userData }) {
                <CreditCard size={24} className="mr-3" />
                Final Step: Application Fee
             </h3>
-            <p className="text-blue-600 font-medium">Please complete the payment to finalize your application.</p>
-            <div className="text-6xl font-black text-gray-900 py-4">₹250</div>
+            <p className="text-blue-600 font-medium">Please complete the payment for the Teacher Recruitment Application Fee to finalize your application.</p>
+            <div className="text-6xl font-black text-gray-900 py-4">₹250 INR</div>
           </div>
 
           <div className="bg-gray-50/80 p-6 rounded-2xl border border-gray-100 space-y-4 text-left">
@@ -566,7 +566,7 @@ export default function ApplicationForm({ userData }) {
           <div className="flex justify-between items-center pb-2 border-b border-gray-200">
             <h3 className="text-xl font-bold text-gray-800">8. Agreement & Payment</h3>
             <div className="text-lg font-bold text-green-800 bg-green-100 px-4 py-1 rounded-full shadow-sm">
-              Amount: ₹250
+              Application Fee: ₹250 INR
             </div>
           </div>
           
