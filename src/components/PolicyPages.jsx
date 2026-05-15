@@ -26,9 +26,8 @@ export const ContactUs = () => (
       <h3 className="text-xl font-bold text-gray-900 mb-4">Army Public School</h3>
       <div className="space-y-3">
         <p><strong>Address:</strong> Old Cantt, Prayagraj, Uttar Pradesh, India</p>
-        <p><strong>Email:</strong> support@armypcp.vercel.app (Replace with actual email)</p>
-        <p><strong>Phone:</strong> +91-XXXX-XXXXXX (Replace with actual phone)</p>
-        <p><strong>Operating Hours:</strong> Monday to Friday, 9:00 AM to 4:00 PM (IST)</p>
+        <p><strong>Email:</strong> armyschoololdcant@gmail.com </p>
+        <p><strong>Phone:</strong> +91-8299-129733 </p>
       </div>
     </div>
   </PageLayout>
