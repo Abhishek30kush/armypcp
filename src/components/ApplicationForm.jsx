@@ -499,8 +499,9 @@ export default function ApplicationForm({ userData }) {
               if (['highSchool', 'intermediate', 'graduation', 'professional'].includes(qual.id)) {
                 isMandatory = true;
               } else if (qual.id === 'postGraduation') {
-                isMandatory = teachingType === 'TGT';
+                isMandatory = teachingType === 'PGT';
               }
+
 
               return (
               <div key={qual.id} className="bg-gray-50/50 p-6 rounded-xl border border-gray-200 space-y-6">
