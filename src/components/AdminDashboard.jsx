@@ -560,7 +560,7 @@ export default function AdminDashboard() {
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {Object.keys(selectedApp)
-                    .filter(key => (key.includes('file') || key === 'photoSignature') && selectedApp[key] && selectedApp[key].startsWith('http'))
+                    .filter(key => (key.includes('file') || key === 'photoSignature' || key === 'receiptUrl') && selectedApp[key] && selectedApp[key].startsWith('http'))
                     .map(key => (
                       <a 
                         key={key}
@@ -579,7 +579,7 @@ export default function AdminDashboard() {
                       </a>
                     ))
                   }
-                  {Object.keys(selectedApp).filter(key => (key.includes('file') || key === 'photoSignature') && selectedApp[key] && selectedApp[key].startsWith('http')).length === 0 && (
+                  {Object.keys(selectedApp).filter(key => (key.includes('file') || key === 'photoSignature' || key === 'receiptUrl') && selectedApp[key] && selectedApp[key].startsWith('http')).length === 0 && (
                     <p className="col-span-full text-center py-6 text-gray-400 font-medium bg-gray-50 rounded-2xl border border-dashed border-gray-200">
                       No files available for this applicant
                     </p>
