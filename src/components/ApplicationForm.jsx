@@ -338,6 +338,7 @@ export default function ApplicationForm({ userData }) {
             </div>
           </div>
 
+          {/*
           <div className="relative flex items-center py-6">
             <div className="flex-grow border-t border-gray-300"></div>
             <span className="flex-shrink-0 mx-4 text-gray-500 font-medium text-sm uppercase tracking-wider">OR PAY ONLINE</span>
@@ -356,6 +357,7 @@ export default function ApplicationForm({ userData }) {
               Secure Checkout • UPI, Cards & Net Banking Accepted
             </p>
           </div>
+          */}
         </div>
       </div>
     );
