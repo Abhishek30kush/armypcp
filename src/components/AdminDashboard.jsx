@@ -591,7 +591,7 @@ export default function AdminDashboard() {
             {/* Modal Footer */}
             <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
               <div className="flex items-center space-x-3">
-                {selectedApp.status === 'Payment Verification Pending' && (
+                {selectedApp.status !== 'Paid' && (
                   <button 
                     onClick={() => confirmPayment(selectedApp.id)}
                     className="px-6 py-2.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-md flex items-center"
