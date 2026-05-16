@@ -8,9 +8,9 @@ service cloud.firestore {
       // Allow anyone to submit a new application
       allow create: if true;
       
-      // Allow reading and updating if they know the ID
-      // This is necessary for the current flow where the ID is generated on client
-      allow read, update: if true;
+      // Allow reading, updating, and deleting
+      // This is necessary for the current flow where the ID is generated on client and admin needs to delete
+      allow read, update, delete: if true;
     }
     
     // User profiles: strictly owner-only for sensitive data
