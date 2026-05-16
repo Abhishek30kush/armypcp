@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { 
   Users, 
   Search, 
@@ -19,7 +19,8 @@ import {
   GraduationCap,
   Lock,
   ArrowLeft,
-  Shield
+  Shield,
+  Trash2
 } from 'lucide-react';
 
 const ADMIN_PASSWORD = "aps@admin2026";
@@ -96,7 +97,34 @@ export default function AdminDashboard() {
     if (key === 'armyDependentFile') return 'Army Dependent Cert';
     if (key === 'csbFile') return 'CSB Certificate';
     if (key === 'ctetFile') return 'CTET Certificate';
+    if (key === 'receiptUrl') return 'Payment Receipt';
     return key;
+  };
+
+  const confirmPayment = async (appId) => {
+    try {
+      await updateDoc(doc(db, "applications", appId), {
+        status: "Paid"
+      });
+      setSelectedApp(prev => ({ ...prev, status: "Paid" }));
+      alert("Payment has been successfully verified and confirmed!");
+    } catch (error) {
+      console.error("Error confirming payment:", error);
+      alert("Failed to confirm payment.");
+    }
+  };
+
+  const deleteApplication = async (appId) => {
+    if (window.confirm("Are you sure you want to completely delete this application? This action cannot be undone.")) {
+      try {
+        await deleteDoc(doc(db, "applications", appId));
+        setSelectedApp(null);
+        alert("Application has been deleted successfully.");
+      } catch (error) {
+        console.error("Error deleting application:", error);
+        alert("Failed to delete application.");
+      }
+    }
   };
 
   // ── Admin Login Screen ──
@@ -310,13 +338,38 @@ export default function AdminDashboard() {
                 </div>
                 <div className="bg-gray-50 p-4 rounded-2xl">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Status</span>
-                  <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">{selectedApp.status}</span>
+                  <span className={`px-2 py-0.5 text-xs font-bold rounded-full inline-block ${
+                    selectedApp.status === 'Paid' ? 'bg-green-100 text-green-700' :
+                    selectedApp.status === 'Payment Verification Pending' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-blue-100 text-blue-700'
+                  }`}>{selectedApp.status}</span>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-2xl">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Applied On</span>
                   <span className="font-bold text-gray-800">{formatDate(selectedApp.createdAt)}</span>
                 </div>
               </div>
+
+              {/* Payment Details */}
+              {(selectedApp.paymentMethod || selectedApp.utrNumber) && (
+                <section>
+                  <h4 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <Shield className="mr-2 text-green-600" size={20} /> Payment Details
+                  </h4>
+                  <div className="bg-yellow-50/50 p-5 rounded-2xl border border-yellow-200 space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">Payment Method:</span>
+                      <span className="font-semibold text-gray-800">{selectedApp.paymentMethod || 'Online Gateway'}</span>
+                    </div>
+                    {selectedApp.utrNumber && (
+                      <div className="flex justify-between text-sm items-center">
+                        <span className="text-gray-500">UTR / Reference No:</span>
+                        <span className="font-mono font-bold text-gray-900 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">{selectedApp.utrNumber}</span>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              )}
 
               {/* Sections */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -536,7 +589,23 @@ export default function AdminDashboard() {
             </div>
             
             {/* Modal Footer */}
-            <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-end">
+            <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+              <div className="flex items-center space-x-3">
+                {selectedApp.status === 'Payment Verification Pending' && (
+                  <button 
+                    onClick={() => confirmPayment(selectedApp.id)}
+                    className="px-6 py-2.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-all shadow-md flex items-center"
+                  >
+                    Confirm Payment
+                  </button>
+                )}
+                <button 
+                  onClick={() => deleteApplication(selectedApp.id)}
+                  className="px-6 py-2.5 bg-red-50 text-red-600 font-bold rounded-xl border border-red-200 hover:bg-red-600 hover:text-white transition-all shadow-sm flex items-center"
+                >
+                  <Trash2 size={18} className="mr-2" /> Delete
+                </button>
+              </div>
               <button 
                 onClick={() => window.print()}
                 className="px-6 py-2.5 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-100 transition-all flex items-center"

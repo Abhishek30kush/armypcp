@@ -58,6 +58,9 @@ export default function ApplicationForm({ userData }) {
   const [formStep, setFormStep] = useState(0); // 0: form, 1: payment, 2: success
   const [cashfree, setCashfree] = useState(null);
   const [generatedAppId, setGeneratedAppId] = useState('');
+  const [utrNumber, setUtrNumber] = useState('');
+  const [receiptFile, setReceiptFile] = useState(null);
+  const [isUploadingPayment, setIsUploadingPayment] = useState(false);
 
   // Initialize Cashfree
   React.useEffect(() => {
@@ -149,6 +152,34 @@ export default function ApplicationForm({ userData }) {
     const storageRef = ref(storage, `applications/${Date.now()}_${path}_${file.name}`);
     const snapshot = await uploadBytes(storageRef, file);
     return await getDownloadURL(snapshot.ref);
+  };
+
+  const handleManualPaymentSubmit = async () => {
+    if (!utrNumber || !receiptFile) {
+      alert("Please provide both UTR Number and upload the payment receipt.");
+      return;
+    }
+    
+    setIsUploadingPayment(true);
+    try {
+      const receiptUrl = await uploadFile(receiptFile, 'payment_receipt');
+      if (!receiptUrl) throw new Error("Failed to upload receipt");
+
+      await updateDoc(doc(db, "applications", generatedAppId), {
+        status: "Payment Verification Pending",
+        paymentMethod: "Manual Bank Transfer",
+        utrNumber: utrNumber,
+        receiptUrl: receiptUrl,
+        paidAt: serverTimestamp()
+      });
+      
+      setFormStep(2);
+    } catch (err) {
+      console.error("Manual payment error:", err);
+      alert("Failed to submit payment details: " + err.message);
+    } finally {
+      setIsUploadingPayment(false);
+    }
   };
 
   const onSubmit = async (data) => {
@@ -264,13 +295,62 @@ export default function ApplicationForm({ userData }) {
             </div>
           </div>
 
-          <div className="space-y-4 pt-4">
+          <div className="bg-white border-2 border-green-100 p-6 rounded-2xl text-left space-y-4 shadow-sm mt-8">
+            <h3 className="text-lg font-bold text-gray-800 border-b border-gray-200 pb-2">Manual Bank Transfer Details</h3>
+            <div className="space-y-2 text-sm text-gray-700">
+              <p>Please transfer the application fee of <b className="text-gray-900">₹250</b> to the following bank account:</p>
+              <div className="bg-gray-50 p-4 rounded-lg font-mono text-sm space-y-1 border border-gray-200">
+                <p><b className="font-semibold font-sans">Account Name:</b> Army Public School Old Cantt</p>
+                <p><b className="font-semibold font-sans">Account No.:</b> 43569209166</p>
+                <p><b className="font-semibold font-sans">IFSC Code:</b> SBIN0010341</p>
+              </div>
+            </div>
+
+            <div className="space-y-4 mt-6 border-t border-gray-100 pt-4">
+              <div className="flex flex-col space-y-1">
+                <label className="text-sm font-semibold text-gray-700">UTR / Transaction Reference No. <span className="text-red-500">*</span></label>
+                <input 
+                  type="text" 
+                  value={utrNumber}
+                  onChange={(e) => setUtrNumber(e.target.value)}
+                  placeholder="Enter 12-digit UTR No."
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 transition-all shadow-sm"
+                />
+              </div>
+
+              <div className="flex flex-col space-y-1">
+                <label className="text-sm font-semibold text-gray-700">Upload Payment Receipt / Screenshot <span className="text-red-500">*</span></label>
+                <input 
+                  type="file" 
+                  accept="image/*,.pdf"
+                  onChange={(e) => setReceiptFile(e.target.files[0])}
+                  className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-300 rounded-lg p-1 bg-white shadow-sm transition-all"
+                />
+              </div>
+
+              <button
+                onClick={handleManualPaymentSubmit}
+                disabled={isUploadingPayment}
+                className="w-full flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-emerald-700 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-green-700 hover:to-emerald-800 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isUploadingPayment ? "Submitting Details..." : "Submit Payment Details"}
+              </button>
+            </div>
+          </div>
+
+          <div className="relative flex items-center py-6">
+            <div className="flex-grow border-t border-gray-300"></div>
+            <span className="flex-shrink-0 mx-4 text-gray-500 font-medium text-sm uppercase tracking-wider">OR PAY ONLINE</span>
+            <div className="flex-grow border-t border-gray-300"></div>
+          </div>
+
+          <div className="space-y-4 pt-2">
             <button
               onClick={handlePayment}
               className="w-full flex items-center justify-center px-8 py-5 bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-xl font-bold rounded-2xl shadow-[0_10px_30px_rgba(37,99,235,0.3)] hover:shadow-[0_15px_40px_rgba(37,99,235,0.4)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
             >
               <CreditCard className="mr-3" size={28} />
-              PAY NOW
+              PAY NOW VIA GATEWAY
             </button>
             <p className="text-gray-400 text-xs font-medium">
               Secure Checkout • UPI, Cards & Net Banking Accepted
@@ -290,13 +370,13 @@ export default function ApplicationForm({ userData }) {
             <CreditCard size={20} className="text-blue-600" />
           </div>
         </div>
-        <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight">Payment Successful!</h2>
+        <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight">Payment Submitted!</h2>
         <div className="space-y-4 max-w-lg">
           <p className="text-gray-600 text-xl font-medium leading-relaxed">
-            Your application for <span className="text-green-700 font-bold">Army Public School, Old Cantt, Prayagraj</span> has been fully processed and successfully submitted.
+            Your application for <span className="text-green-700 font-bold">Army Public School, Old Cantt, Prayagraj</span> has been fully processed and your payment details have been submitted.
           </p>
           <div className="p-4 bg-green-50 rounded-xl border border-green-100 inline-block mb-4">
-            <p className="text-green-800 font-bold">Transaction ID: TXN_{(Math.random() * 1000000).toFixed(0)}</p>
+            <p className="text-green-800 font-bold">Application Reference: {generatedAppId}</p>
           </div>
         </div>
 
@@ -336,7 +416,7 @@ export default function ApplicationForm({ userData }) {
                     <h3 className="font-bold border-b border-gray-300 pb-1 mb-2 text-sm uppercase text-gray-500">Submission Details</h3>
                     <p className="text-lg"><b>App ID:</b> {generatedAppId}</p>
                     <p className="text-lg"><b>Date:</b> {new Date().toLocaleDateString()}</p>
-                    <p className="text-lg"><b>Payment:</b> Success (₹250)</p>
+                    <p className="text-lg"><b>Payment:</b> Submitted (₹250)</p>
                 </div>
             </div>
 
