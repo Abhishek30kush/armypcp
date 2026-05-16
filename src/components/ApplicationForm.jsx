@@ -262,12 +262,12 @@ export default function ApplicationForm({ userData }) {
   if (formStep === 1) {
     return (
       <div className="max-w-2xl mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-white/50 animate-fade-in-up">
-        <div className="bg-gradient-to-r from-green-700 to-emerald-800 py-12 px-12 text-white text-center relative">
+        <div className="bg-gradient-to-r from-blue-700 to-indigo-800 py-12 px-12 text-white text-center relative">
           <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-md animate-success-pop">
-            <CheckCircle size={48} className="text-white" />
+            <CreditCard size={48} className="text-white" />
           </div>
-          <h2 className="text-4xl font-black mb-3 tracking-tight">Submitted Successfully!</h2>
-          <p className="text-green-50 text-lg font-medium">Your application has been recorded in our system.</p>
+          <h2 className="text-4xl font-black mb-3 tracking-tight">Payment Required</h2>
+          <p className="text-blue-50 text-lg font-medium">Your application is saved, but you must complete the payment to finalize it.</p>
         </div>
         
         <div className="p-10 space-y-10 text-center">
