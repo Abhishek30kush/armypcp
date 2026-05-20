@@ -35,6 +35,148 @@ export default function AdminDashboard() {
   const [filterRole, setFilterRole] = useState('All');
   const [selectedApp, setSelectedApp] = useState(null);
 
+  // Helper to export applications to a CSV / Excel file
+  const handleExport = (dataToExport, filename) => {
+    if (!dataToExport || dataToExport.length === 0) {
+      alert("No data available to export.");
+      return;
+    }
+
+    const headers = [
+      "Application ID", "Date Applied", "Status", "Candidate Name", "Teaching Type", "Subject/Role",
+      "Father/Husband Relation", "DOB", "Nationality", "State", "Address", "Mobile No", "Email ID",
+      "Marital Status", "Marital Details", "Spouse Details", "Children Details", "Army Dependent", "Army Cert Link",
+      "Has Experience", "Designation", "Institution", "Notice Period", "Salary Drawn", "Total Exp Years",
+      "CSB Qualified", "CSB %", "CSB Cert Link", "CTET Qualified", "CTET %", "CTET Cert Link",
+      "High School Board", "High School Subject", "High School Year", "High School Marks", "High School Total", "High School %", "High School Sheet Link",
+      "Intermediate Board", "Intermediate Subject", "Intermediate Year", "Intermediate Marks", "Intermediate Total", "Intermediate %", "Intermediate Sheet Link",
+      "Graduation Board", "Graduation Subject", "Graduation Year", "Graduation Marks", "Graduation Total", "Graduation %", "Graduation Sheet Link",
+      "Professional Board", "Professional Subject", "Professional Year", "Professional Marks", "Professional Total", "Professional %", "Professional Sheet Link",
+      "PG Board", "PG Subject", "PG Year", "PG Marks", "PG Total", "PG %", "PG Sheet Link",
+      "Other Board", "Other Subject", "Other Year", "Other Marks", "Other Total", "Other %", "Other Sheet Link",
+      "Photo & Signature Link", "Payment Method", "UTR / Ref No", "Receipt Link"
+    ];
+
+    const escapeCSV = (val) => {
+      if (val === undefined || val === null) return "";
+      let str = "";
+      if (val && typeof val === 'object' && val.toDate) {
+        str = val.toDate().toLocaleDateString('en-IN');
+      } else {
+        str = String(val);
+      }
+      str = str.replace(/"/g, '""');
+      if (str.includes(',') || str.includes('\n') || str.includes('\r') || str.includes('"')) {
+        return `"${str}"`;
+      }
+      return str;
+    };
+
+    const rows = dataToExport.map(app => {
+      const subjectOrRole = app.pgtSubject || app.tgtSubject || app.balvatikaRole || "";
+      const formattedDate = app.createdAt && typeof app.createdAt === 'object' && app.createdAt.toDate 
+        ? app.createdAt.toDate().toLocaleDateString('en-IN') 
+        : app.createdAt ? new Date(app.createdAt).toLocaleDateString('en-IN') : "";
+
+      return [
+        app.applicationId || "",
+        formattedDate,
+        app.status || "",
+        app.name || "",
+        app.teachingType || "",
+        subjectOrRole,
+        app.relation || "",
+        app.dob || "",
+        app.nationality || "",
+        app.state || "",
+        app.address || "",
+        app.mobNo || "",
+        app.emailId || "",
+        app.maritalStatus || "",
+        app.marriedDetails || "",
+        app.spouseDetails || "",
+        app.childrenDetails || "",
+        app.armyDependent || "",
+        app.armyDependentFile || "",
+        app.hasExperience || "",
+        app.exp_designation || "",
+        app.exp_institution || "",
+        app.exp_notice_period || "",
+        app.exp_salary || "",
+        app.exp_total_years || "",
+        app.csb || "",
+        app.csbPercent || "",
+        app.csbFile || "",
+        app.ctet || "",
+        app.ctetPercent || "",
+        app.ctetFile || "",
+        // High School
+        app.edu_highSchool_board || "",
+        app.edu_highSchool_subject || "",
+        app.edu_highSchool_year || "",
+        app.edu_highSchool_marks || "",
+        app.edu_highSchool_totalMarks || "",
+        app.edu_highSchool_percent || "",
+        app.edu_highSchool_file || "",
+        // Intermediate
+        app.edu_intermediate_board || "",
+        app.edu_intermediate_subject || "",
+        app.edu_intermediate_year || "",
+        app.edu_intermediate_marks || "",
+        app.edu_intermediate_totalMarks || "",
+        app.edu_intermediate_percent || "",
+        app.edu_intermediate_file || "",
+        // Graduation
+        app.edu_graduation_board || "",
+        app.edu_graduation_subject || "",
+        app.edu_graduation_year || "",
+        app.edu_graduation_marks || "",
+        app.edu_graduation_totalMarks || "",
+        app.edu_graduation_percent || "",
+        app.edu_graduation_file || "",
+        // Professional
+        app.edu_professional_board || "",
+        app.edu_professional_subject || "",
+        app.edu_professional_year || "",
+        app.edu_professional_marks || "",
+        app.edu_professional_totalMarks || "",
+        app.edu_professional_percent || "",
+        app.edu_professional_file || "",
+        // PG
+        app.edu_postGraduation_board || "",
+        app.edu_postGraduation_subject || "",
+        app.edu_postGraduation_year || "",
+        app.edu_postGraduation_marks || "",
+        app.edu_postGraduation_totalMarks || "",
+        app.edu_postGraduation_percent || "",
+        app.edu_postGraduation_file || "",
+        // Other
+        app.edu_anyOther_board || "",
+        app.edu_anyOther_subject || "",
+        app.edu_anyOther_year || "",
+        app.edu_anyOther_marks || "",
+        app.edu_anyOther_totalMarks || "",
+        app.edu_anyOther_percent || "",
+        app.edu_anyOther_file || "",
+        // Docs/Receipts
+        app.photoSignature || "",
+        app.paymentMethod || "",
+        app.utrNumber || "",
+        app.receiptUrl || ""
+      ].map(escapeCSV);
+    });
+
+    const csvString = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   useEffect(() => {
     if (!adminAuth) return;
     setLoading(true);
@@ -199,9 +341,28 @@ export default function AdminDashboard() {
           <p className="text-gray-500 font-medium">Manage and review teacher applications</p>
         </div>
         
-        <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-sm font-bold text-gray-700">{applications.length} Total Applications</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-bold text-gray-700">{applications.length} Total</span>
+          </div>
+
+          <button
+            onClick={() => handleExport(applications, `APS_All_Candidates_${new Date().toLocaleDateString('en-IN').replace(/\//g, '-')}.csv`)}
+            className="flex items-center px-4 py-2 bg-green-700 hover:bg-green-800 text-white font-bold text-sm rounded-full shadow-sm hover:shadow transition-all active:scale-95 gap-2"
+          >
+            <Download size={16} />
+            Export All
+          </button>
+
+          <button
+            onClick={() => handleExport(filteredApplications, `APS_Filtered_Candidates_${new Date().toLocaleDateString('en-IN').replace(/\//g, '-')}.csv`)}
+            className="flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-full shadow-sm hover:shadow transition-all active:scale-95 gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={filteredApplications.length === 0}
+          >
+            <Download size={16} />
+            Export Filtered ({filteredApplications.length})
+          </button>
         </div>
       </header>
 
