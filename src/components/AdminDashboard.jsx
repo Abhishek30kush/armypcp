@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import { 
   Users, 
   Search, 
@@ -34,6 +34,8 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('All');
   const [selectedApp, setSelectedApp] = useState(null);
+  const [portalOpen, setPortalOpen] = useState(true);
+  const [settingLoading, setSettingLoading] = useState(true);
 
   // Helper to export applications to a CSV / Excel file
   const handleExport = (dataToExport, filename) => {
@@ -181,6 +183,15 @@ export default function AdminDashboard() {
     if (!adminAuth) return;
     setLoading(true);
 
+    const unsubSettings = onSnapshot(doc(db, "settings", "portal"), (docSnap) => {
+      if (docSnap.exists()) {
+        setPortalOpen(docSnap.data().isOpen);
+      } else {
+        setPortalOpen(true);
+      }
+      setSettingLoading(false);
+    });
+
     // Try simple query first (no orderBy which needs index)
     const q = collection(db, "applications");
     const unsubscribe = onSnapshot(q, 
@@ -204,8 +215,20 @@ export default function AdminDashboard() {
       }
     );
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      unsubSettings();
+    };
   }, [adminAuth]);
+
+  const togglePortal = async () => {
+    try {
+      await setDoc(doc(db, "settings", "portal"), { isOpen: !portalOpen }, { merge: true });
+    } catch (error) {
+      console.error("Error toggling portal:", error);
+      alert("Failed to toggle portal status.");
+    }
+  };
 
   const handleAdminLogin = (e) => {
     e.preventDefault();
@@ -342,6 +365,17 @@ export default function AdminDashboard() {
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={togglePortal}
+            disabled={settingLoading}
+            className={`flex items-center px-4 py-2 font-bold text-sm rounded-full shadow-sm hover:shadow transition-all active:scale-95 gap-2 ${
+              portalOpen ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            <Lock size={16} />
+            {portalOpen ? 'Close Portal' : 'Open Portal'}
+          </button>
+
           <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-200">
             <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-sm font-bold text-gray-700">{applications.length} Total</span>
